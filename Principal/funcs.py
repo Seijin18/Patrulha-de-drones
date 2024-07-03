@@ -78,3 +78,16 @@ while True:
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
+
+def getWebCamImage(frame):
+    webcam = cv2.VideoCapture(0)
+
+    if webcam.isOpened():
+        validacao, frame = webcam.read()
+        while validacao:
+            validacao, frame = webcam.read()
+            cv2.imshow("Webcam", frame)
+            key = cv2.waitKey(5)
+            if key == 27: # ESC
+                exit
+                
