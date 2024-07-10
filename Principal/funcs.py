@@ -47,13 +47,52 @@ def detect_triangles(frame):
 
     return filteredFrame
 
+def list_webcams(): # List all connected webcams
+    index = 0
+    arr = []
+    while True:
+        cap = cv2.VideoCapture(index)
+        if not cap.read()[0]:
+            break
+        else:
+            arr.append(index)
+        cap.release()
+        index += 1
+    return arr
+
+def getWebCamImage(webcam_index):
+    webcam = cv2.VideoCapture(webcam_index) # 0 refers to the first webcam connected
+
+    if webcam.isOpened():
+        validacao, frame = webcam.read()
+        return frame
+    else:
+        print("Webcam not found")
+        return None
+
+# Select video source
+source = input("Select video source webcam (1) or drone (2): ")
+
+# Select the webcam to use
+webcams = list_webcams()
+print("Connected webcams:", webcams)
+webcam_index = int(input("Select the webcam to use: "))
+webcam = cv2.VideoCapture(webcam_index)
+
+# Connect to the Tello drone
 tello = Tello()
 
 tello.connect()
 tello.streamon()
 
 while True:
-    frame = tello.get_frame_read().frame
+    if source == "1":
+        frame = getWebCamImage(webcam_index)
+    elif source == "2":
+        frame = tello.get_frame_read().frame
+    else:
+        print("Invalid source")
+        break
 
     # Apply color correction
     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB) # type: ignore
@@ -79,15 +118,3 @@ while True:
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-def getWebCamImage(frame):
-    webcam = cv2.VideoCapture(0)
-
-    if webcam.isOpened():
-        validacao, frame = webcam.read()
-        while validacao:
-            validacao, frame = webcam.read()
-            cv2.imshow("Webcam", frame)
-            key = cv2.waitKey(5)
-            if key == 27: # ESC
-                exit
-                
