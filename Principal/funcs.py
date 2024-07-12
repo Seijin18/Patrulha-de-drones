@@ -79,17 +79,17 @@ print("Connected webcams:", webcams)
 webcam_index = int(input("Select the webcam to use: "))
 webcam = cv2.VideoCapture(webcam_index)
 
-# Connect to the Tello drone
-tello = Tello()
+# # Connect to the Tello drone
+# tello = Tello()
 
-tello.connect()
-tello.streamon()
+# tello.connect()
+# tello.streamon()
 
 while True:
     if source == "1":
         frame = getWebCamImage(webcam_index)
-    elif source == "2":
-        frame = tello.get_frame_read().frame
+    # elif source == "2":
+    #     frame = tello.get_frame_read().frame
     else:
         print("Invalid source")
         break
