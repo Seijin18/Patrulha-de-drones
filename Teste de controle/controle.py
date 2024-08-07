@@ -78,7 +78,9 @@ def detect_objects(frame):
 
     for contour in large_contours:
         # Draw the contour
-        cv2.drawContours(filteredFrame, [contour], -1, (0, 255, 0), 2)
+        epsilon = 0.022 * cv2.arcLength(contour, True)
+        approx = cv2.approxPolyDP(contour, epsilon, True)
+        cv2.drawContours(filteredFrame, [approx], -1, (0, 255, 0), 2)
 
         # Compute the center of the contour
         M = cv2.moments(contour)
