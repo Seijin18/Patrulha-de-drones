@@ -22,7 +22,9 @@ frameWidth = width
 frameHeight = height
 
 global imgContour
-
+global dir;
+def empty(a):
+    pass
 #ajustar cor
 cv2.namedWindow("HSV")
 cv2.resizeWindow("HSV",640,240)
