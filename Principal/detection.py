@@ -24,6 +24,8 @@ def detect_objects(frame):
 
     # Create a filter for the color red
     mask = cv2.inRange(hsv, lower_red, upper_red)
+    
+    mask = cv2.Canny(mask, 100, 200)
 
     # Apply the filter to the image
     filteredFrame = cv2.bitwise_and(frame, frame, mask=mask)
@@ -38,11 +40,25 @@ def detect_objects(frame):
     area, centers = 0, (None, None)
 
     for contour in large_contours:
+        '''
         # Draw the contour
         epsilon = 0.022 * cv2.arcLength(contour, True)
         approx = cv2.approxPolyDP(contour, epsilon, True)
         cv2.drawContours(filteredFrame, [approx], -1, (0, 255, 0), 2)
+        '''
+        
+        # Criar uma nova imagem em branco com as mesmas dimensões da imagem original
+        height, width = filteredFrame.shape[:2]
+        blankImage = np.zeros((height, width, 3), np.uint8)
+        
+        # Calcular epsilon e aproximar o contorno
+        epsilon = 0.022 * cv2.arcLength(contour, True)
+        approx = cv2.approxPolyDP(contour, epsilon, True)
+        
+        # Desenhar o contorno na nova imagem em branco
+        cv2.drawContours(blankImage, [approx], -1, (0, 255, 0), 2)
 
+        '''
         # Compute the center of the contour
         M = cv2.moments(contour)
         if M["m00"] != 0:
@@ -52,5 +68,18 @@ def detect_objects(frame):
             if area < cv2.contourArea(contour):
                 area = cv2.contourArea(contour)
                 centers = (cX, cY)
+        '''
+        
+        # Compute the center of the contour
+        M = cv2.moments(contour)
+        if M["m00"] != 0:
+            cX = int(M["m10"] / M["m00"])
+            cY = int(M["m01"] / M["m00"])
+            cv2.circle(blankImage, (cX, cY), 3, (255, 255, 255), -1)
+            if area < cv2.contourArea(contour):
+                area = cv2.contourArea(contour)
+                centers = (cX, cY)
+        
+        return blankImage, centers
 
     return filteredFrame, centers
