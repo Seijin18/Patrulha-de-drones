@@ -22,13 +22,7 @@ def preprocess(img):
     imgHsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     lower_red = np.array([0, 120, 70])  # Intervalo inferior de vermelho
     upper_red = np.array([10, 255, 255])  # Intervalo superior de vermelho
-    mask1 = cv2.inRange(imgHsv, lower_red, upper_red)
-
-    lower_red = np.array([170, 120, 70])  # Outro intervalo inferior de vermelho
-    upper_red = np.array([180, 255, 255])  # Outro intervalo superior de vermelho
-    mask2 = cv2.inRange(imgHsv, lower_red, upper_red)
-
-    mask = mask1 | mask2
+    mask = cv2.inRange(imgHsv, lower_red, upper_red)
 
     img_gray = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
     img_blur = cv2.GaussianBlur(img_gray, (5, 5), 1)
