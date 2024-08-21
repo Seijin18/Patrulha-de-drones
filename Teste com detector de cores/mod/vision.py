@@ -74,11 +74,11 @@ class Vision():
                     cv2.putText(imgcontour, " GO RIGHT ", (20, 50), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 255), 3)
                     cv2.rectangle(imgcontour, (int(frameWidth / 2 + deadZone), int(frameHeight / 2 - deadZone)),(frameWidth, int(frameHeight / 2) + deadZone), (0, 0, 255), cv2.FILLED)
                 elif (cy < int(frameHeight / 2) - deadZone):
-                    cv2.putText(imgContour, " GO UP ", (20, 50), cv2.FONT_HERSHEY_COMPLEX,1,(0, 0, 255), 3)
-                    cv2.rectangle(imgContour,(int(frameWidth/2-deadZone),0),(int(frameWidth/2+deadZone),int(frameHeight/2)-deadZone),(0,0,255),cv2.FILLED)
+                    cv2.putText(imgcontour, " GO UP ", (20, 50), cv2.FONT_HERSHEY_COMPLEX,1,(0, 0, 255), 3)
+                    cv2.rectangle(imgcontour,(int(frameWidth/2-deadZone),0),(int(frameWidth/2+deadZone),int(frameHeight/2)-deadZone),(0,0,255),cv2.FILLED)
                 elif (cy > int(frameHeight / 2) + deadZone):
-                    cv2.putText(imgContour, " GO DOWN ", (20, 50), cv2.FONT_HERSHEY_COMPLEX, 1,(0, 0, 255), 3)
-                    cv2.rectangle(imgContour,(int(frameWidth/2-deadZone),int(frameHeight/2)+deadZone),(int(frameWidth/2+deadZone),frameHeight),(0,0,255),cv2.FILLED)
+                    cv2.putText(imgcontour, " GO DOWN ", (20, 50), cv2.FONT_HERSHEY_COMPLEX, 1,(0, 0, 255), 3)
+                    cv2.rectangle(imgcontour,(int(frameWidth/2-deadZone),int(frameHeight/2)+deadZone),(int(frameWidth/2+deadZone),frameHeight),(0,0,255),cv2.FILLED)
                 elif area < 10000:
                     cv2.putText(imgcontour, " MOVE FORWARD ", (20, 50), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 255), 3)
                 elif area > 10000:
