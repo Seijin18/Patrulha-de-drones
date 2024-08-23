@@ -19,6 +19,9 @@ def detect_triangles(frame):
     # Create a filter for the color red
     mask = cv2.inRange(hsv, lower_red, upper_red)
 
+    # Apply canny edge detection
+    mask = cv2.Canny(mask, 100, 200)
+
     # Apply the filter to the image
     filteredFrame = cv2.bitwise_and(frame, frame, mask=mask)
 
