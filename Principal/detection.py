@@ -75,7 +75,7 @@ def detect_objects(frame):
         if M["m00"] != 0:
             cX = int(M["m10"] / M["m00"])
             cY = int(M["m01"] / M["m00"])
-            cv2.circle(blankImage, (cX, cY), 3, (255, 255, 255), -1)
+            #cv2.circle(blankImage, (cX, cY), 3, (255, 255, 255), -1)
             if area < cv2.contourArea(contour):
                 area = cv2.contourArea(contour)
                 centers = (cX, cY)

@@ -6,7 +6,6 @@ from matplotlib import path as mplPath
 from math import atan2, degrees, pi
 
 def arrows_detection(frame):
-    '''
     img = cv2.GaussianBlur(frame, (11, 11), 0)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     corners = cv2.goodFeaturesToTrack(gray, 7, 0.01, 10)
@@ -32,22 +31,23 @@ def arrows_detection(frame):
     if abs(xmax - xmin) > abs(ymax - ymin):  # Setas horizontais
         if np.mean(corners[:, 0, 0]) < x_center:
             print('RIGHR')
-            direction = 'RIGHT'
+            direction = 1
         else:
             print('LEFT')
-            direction = 'LEFT'
+            direction = 2
     else:  # Setas verticais
         if np.mean(corners[:, 0, 1]) < y_center:
             print('DOWN')
-            direction = 'DOWN'
+            direction = 3
         else:
             print('UP')
-            direction = 'UP'
+            direction = 0
             
     
     cv2.imshow("img", img)
 
     return img, direction
+    
     '''
     
     img = frame
@@ -79,8 +79,9 @@ def arrows_detection(frame):
         else:
             print('DOWN')   
     
-    #cv2.imshow('image',img)
+    cv2.imshow('image',img)
     return img
+    '''
     '''
     height, width, channels = img.shape 
     img = cv2.resize(img, (width*8, height*8))                    
