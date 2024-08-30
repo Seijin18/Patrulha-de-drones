@@ -1,10 +1,115 @@
 import cv2
 import numpy as np
-from matplotlib import pyplot as plt
-import math
-from matplotlib import path as mplPath
-from math import atan2, degrees, pi
 
+min_consecutive_detections = 30
+min_tracking_consecutive_detections = 50
+
+def find_tip(points, convex_hull):
+    length = len(points)
+    indices = np.setdiff1d(range(length), convex_hull)
+
+    for i in range(2):
+        j = (indices[i] + 2) % length
+        if np.all(points[j] == points[indices[i - 1] - 2]):
+            return tuple(points[j])
+
+
+def is_valid_arrow(approx, hull, area):
+    sides = len(hull)
+
+    bounding_rect = cv2.boundingRect(approx)
+    aspect_ratio = float(bounding_rect[2]) / float(bounding_rect[3])
+
+    return (
+            6 > sides > 3 and
+            sides + 2 == len(approx) and
+            0.5 < aspect_ratio < 2.0
+    )
+
+
+def get_arrow_direction(arrow_tip, centroid):
+    dx = arrow_tip[0] - centroid[0]
+    dy = arrow_tip[1] - centroid[1]
+
+    if abs(dx) > abs(dy):
+        if dx > 0:
+            return "direita"
+        else:
+            return "esquerda"
+    else:
+        if dy > 0:
+            return "baixo"
+        else:
+            return "cima"
+
+def get_direction(img, contours, consecutive_detections, last_detection):
+    min_area_threshold = 500
+    valid_arrow_detected = False
+    arrow_tip = False
+    
+    biggest_area = 0;
+    biggest_contours = []
+
+    for cnt in contours:
+        area = cv2.contourArea(cnt)
+        if area > biggest_area and area > min_area_threshold:
+            peri = cv2.arcLength(cnt, True)
+            approx = cv2.approxPolyDP(cnt, 0.025 * peri, True)
+            hull = cv2.convexHull(approx, returnPoints=False)
+
+            if is_valid_arrow(approx, hull, area):
+                biggest_area = area
+                biggest_contours = cnt
+                arrow_tip = find_tip(approx[:, 0, :], hull.squeeze())
+    
+    if arrow_tip:
+        M = cv2.moments(biggest_contours)
+        if M["m10"] != 0 and M["m00"] != 0:
+            centroid = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
+            direction = get_arrow_direction(arrow_tip, centroid)
+
+            cv2.drawContours(img, [biggest_contours], -1, (0, 255, 0), 3)
+            cv2.circle(img, arrow_tip, 3, (0, 0, 255), cv2.FILLED)
+
+            cv2.circle(img, centroid, 5, (255, 0, 0), cv2.FILLED)
+
+            cv2.putText(img, f"Direcao: {direction}", (centroid[0] + 20, centroid[1]),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
+
+            valid_arrow_detected = True
+
+    if valid_arrow_detected:
+        if last_detection:
+            consecutive_detections += 1
+        else:
+            consecutive_detections = 1
+        last_detection = True
+    else:
+        last_detection = False
+        consecutive_detections = 0
+
+    if consecutive_detections >= min_consecutive_detections:
+        return img, direction, consecutive_detections, last_detection, centroid
+
+    return img, "nd", consecutive_detections, last_detection, (None, None)
+
+def is_arrow_direction_deslocate (direction, tracking_direction, tracking_consecutive_detection, tracking_last_detection):
+    if direction != tracking_direction:
+        if tracking_last_detection:
+            tracking_consecutive_detection += 1
+        else:
+            tracking_consecutive_detection = 1
+        tracking_last_detection = True
+    else:
+        tracking_last_detection = False
+        tracking_consecutive_detection = 0
+        
+    if tracking_consecutive_detection >= min_tracking_consecutive_detections:
+        return True, tracking_consecutive_detection, tracking_last_detection
+    
+    return False, tracking_consecutive_detection, tracking_last_detection
+
+'''
 def arrows_detection(frame):
     img = cv2.GaussianBlur(frame, (11, 11), 0)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -47,9 +152,8 @@ def arrows_detection(frame):
     cv2.imshow("img", img)
 
     return img, direction
-    
-    '''
-    
+'''
+'''
     img = frame
     img = cv2.GaussianBlur(img, (11,11), 0)
     gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
@@ -81,8 +185,8 @@ def arrows_detection(frame):
     
     cv2.imshow('image',img)
     return img
-    '''
-    '''
+'''
+'''
     height, width, channels = img.shape 
     img = cv2.resize(img, (width*8, height*8))                    
     img = cv2.medianBlur(img,9)
@@ -277,4 +381,4 @@ def arrows_detection(frame):
 
         print(smer)
         return smer
-    '''
+'''

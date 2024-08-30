@@ -1,4 +1,5 @@
 from djitellopy import Tello
+from time import sleep
 import cv2
 
 def chose_frame_generation(frame_generation: int):
@@ -10,6 +11,8 @@ def chose_frame_generation(frame_generation: int):
         
         if int(input("deseja que o drone levante vou? sim[1] não[0]: ")):
             drone.takeoff()
+            
+        sleep(5)
         
         return drone
     else:

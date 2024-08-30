@@ -10,6 +10,9 @@ import numpy as np
 lower_red = np.array([0, 160, 100])  # Lower bound for the color
 upper_red = np.array([50, 255, 255])  # Upper bound for the color
 
+#lower_red = np.array([0, 120, 70])
+#upper_red = np.array([10, 255, 255])
+
 min_contour_area = 1000  # Minimum contour area to consider
 
 # Função de detecção de objetos
@@ -40,13 +43,13 @@ def detect_objects(frame):
     area, centers = 0, (None, None)
 
     for contour in large_contours:
-        '''
+        
         # Draw the contour
         epsilon = 0.022 * cv2.arcLength(contour, True)
         approx = cv2.approxPolyDP(contour, epsilon, True)
         cv2.drawContours(filteredFrame, [approx], -1, (0, 255, 0), 2)
-        '''
         
+        '''
         # Criar uma nova imagem em branco com as mesmas dimensões da imagem original
         height, width = filteredFrame.shape[:2]
         blankImage = np.zeros((height, width, 3), np.uint8)
@@ -57,8 +60,9 @@ def detect_objects(frame):
         
         # Desenhar o contorno na nova imagem em branco
         cv2.drawContours(blankImage, [approx], -1, (0, 255, 0), 2)
-
         '''
+        
+        
         # Compute the center of the contour
         M = cv2.moments(contour)
         if M["m00"] != 0:
@@ -68,8 +72,8 @@ def detect_objects(frame):
             if area < cv2.contourArea(contour):
                 area = cv2.contourArea(contour)
                 centers = (cX, cY)
-        '''
         
+        '''
         # Compute the center of the contour
         M = cv2.moments(contour)
         if M["m00"] != 0:
@@ -81,5 +85,6 @@ def detect_objects(frame):
                 centers = (cX, cY)
         
         return blankImage, centers
-
-    return filteredFrame, centers
+        '''
+        
+    return filteredFrame, large_contours
