@@ -7,15 +7,12 @@ def chose_frame_generation(frame_generation: int):
     if frame_generation:
         drone = Tello()
         drone.connect()
-        drone.get_battery()
-        
-        print(f"Bateria: {drone.get_battery()}")
+        drone.streamon()
         
         if int(input("deseja que o drone levante vou? sim[1] não[0]: ")):
             drone.takeoff()
             
-        sleep(3)
-        drone.streamon()
+        sleep(5)
         
         return drone
     else:
