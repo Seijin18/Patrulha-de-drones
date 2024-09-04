@@ -3,12 +3,12 @@ import numpy as np
 
 # variaveis =
 # Define range for the color red
-#lower_red = np.array([160, 60, 60])
-#upper_red = np.array([179, 255, 255])
+lower_red = np.array([160, 60, 60])
+upper_red = np.array([179, 255, 255])
 
 # Define range for the color red
-lower_red = np.array([0, 160, 100])  # Lower bound for the color
-upper_red = np.array([50, 255, 255])  # Upper bound for the color
+#lower_red = np.array([0, 160, 100])  # Lower bound for the color
+#upper_red = np.array([50, 255, 255])  # Upper bound for the color
 
 #lower_red = np.array([0, 120, 70])
 #upper_red = np.array([10, 255, 255])
