@@ -46,6 +46,8 @@ def main():
                         is_tracking = False
                         tracking_consecutive_detection = 0
                         tracking_last_detection = False
+                    else:
+                        set_direction(frame_generation, "cima", uav)
                 else:
                     if direction in ["direita", "esquerda"]:
                         is_tracking = True
@@ -59,13 +61,13 @@ def main():
                     set_direction(frame_generation, tracking_direction, uav)
                     is_tracking = False
             elif no_arrow_counter >= min_no_arrow:
-                uav.rotate_clockwise(10) if frame_generation else print("Não existe seta")
+                print("Não existe seta")
                 no_arrow_counter = 0
             else:
                 no_arrow_counter += 1
         
         #hud de imagens e deteccao
-        stackImages(1, ([filteredFrame, frame]))
+        stackImages(0.5, ([filteredFrame, frame]))
         
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
