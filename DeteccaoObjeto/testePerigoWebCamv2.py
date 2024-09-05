@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import datetime as dt
 
 # Carregando as classes do COCO dataset
 class_names = []
@@ -8,7 +9,9 @@ with open('DeteccaoObjeto/coco.names', 'r') as f:
 
 # Índice da classe 'knife' no COCO dataset = 43
 # Índice da classe 'person' no COCO dataset = 0
-KNIFE_CLASS_ID = 0
+# Índice da classe 'mouse' no COCO dataset = 64
+
+KNIFE_CLASS_ID = 64
 
 '''
 me = Tello()
@@ -17,6 +20,7 @@ print(f"Battery: {me.get_battery()}%")
 me.streamoff()
 me.streamon()
 '''
+cv2.cuda.getCudaEnabledDeviceCount()
 
 # Capturando vídeo da webcam do notebook
 cap = cv2.VideoCapture(0)
