@@ -1,10 +1,13 @@
 from djitellopy import Tello
 import cv2
+from Principal.saveFrames import save_frame
 from control import is_centralize, set_direction
 from detection import detect_objects
 from hud import stackImages
 from arrows_detection import get_direction, is_arrow_direction_deslocate
 from frame import chose_frame_generation, get_frame, close_frame_generation
+from timeit import default_timer as timer
+from datetime import datetime as dt
 
 #from teste_arrows_detection import get_arrow_info, get_filter_arrow_image, preprocess, get_arrow_direction
 #from teste_arrows_detection import getContours, get_direction
@@ -19,6 +22,7 @@ def main():
     tracking_consecutive_detection = 0
     tracking_last_detection = False
     no_arrow_counter = 0
+    last_capture = 0
     
     frame_generation = int(input("drone[1] webcam[0]: "))
     
@@ -33,6 +37,11 @@ def main():
         frame = get_frame(frame_generation, uav)
         
         filteredFrame, large_contours = detect_objects(frame)
+        
+        if timer() - last_capture >= 3:
+            frame_name = dt.now().strftime("%d-%m-%Y_%H-%M-%S")
+            save_frame(frame, f"images/{frame_name}.png")
+            last_capture = timer()
         
         if large_contours:
             filteredFrame, direction, consecutive_detections, last_detection, centroid = get_direction(filteredFrame, large_contours, consecutive_detections, last_detection)
