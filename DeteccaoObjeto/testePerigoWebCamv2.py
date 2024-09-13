@@ -1,63 +1,83 @@
 import cv2
 import numpy as np
 
-# Carregando as classes do COCO dataset
-class_names = []
-with open('DeteccaoObjeto/coco.names', 'r') as f:
-    class_names = [cname.strip() for cname in f.readlines()]
-
-# Índice da classe 'knife' no COCO dataset = 43
-# Índice da classe 'person' no COCO dataset = 0
-KNIFE_CLASS_ID = 0
-
-'''
-me = Tello()
-me.connect()
-print(f"Battery: {me.get_battery()}%")
-me.streamoff()
-me.streamon()
-'''
-
-# Capturando vídeo da webcam do notebook
-cap = cv2.VideoCapture(0)
-
-# Carregando a rede YOLOv4-tinyq
-net = cv2.dnn.readNet('DeteccaoObjeto/yolov4-tinyVersion/yolov4-tiny.weights', 'DeteccaoObjeto/yolov4-tinyVersion/yolov4-tiny.cfg')
-
-# Verificando se há suporte para GPU
-if cv2.cuda.getCudaEnabledDeviceCount() > 0:
-    print('CUDA enabled devices found, using GPU for inference')
-    net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
-    net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
-else:
-    print('CUDA enabled devices not found, using CPU for inference')
-    net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
-    net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
-
-# Configurando os parâmetros da rede neural
-model = cv2.dnn_DetectionModel(net)
-
-# Reduzi o tamanho da entrada para melhorar a velocidade do modelo; size=(320, 320), size=(416, 416) ou size=(608, 608)
-model.setInputParams(size=(320, 320), scale=1 / 255)
 
 
-# Função para detectar facas em um frame
-def detect_knifes(frame):
+class detection:
+    def __init__(self):
+        # self.cap = cv2.VideoCapture(0) # Frame
+        self.class_names = []
+        with open('DeteccaoObjeto/coco.names', 'r') as f:
+            self.class_names = [cname.strip() for cname in f.readlines()]
+        
+        self.net = cv2.dnn.readNet('DeteccaoObjeto/yolov4-tinyVersion/yolov4-tiny.weights', 'DeteccaoObjeto/yolov4-tinyVersion/yolov4-tiny.cfg')
+        if cv2.cuda.getCudaEnabledDeviceCount() > 0:
+            print('CUDA enabled devices found, using GPU for inference')
+            self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
+            self.net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
+        else:
+            print('CUDA enabled devices not found, using CPU for inference')
+            self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
+            self.net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
+        self.model = cv2.dnn_DetectionModel(self.net)
+        self.model.setInputParams(size=(320, 320), scale=1 / 255)
     
-    # Detectando objetos no frame
-    classes, scores, boxes = model.detect(frame, confThreshold=0.4, nmsThreshold=0.4)
+    # Função para detectar facas em um frame
+    def detect_knifes_AI(self, path):
+        frame = cv2.imread(path)
+        
+        KNIFE_CLASS_ID = 64  # Índice da classe 'knife' no COCO dataset
+        # KNIFE_CLASS_ID = 43  # Índice da classe 'knife' no COCO dataset
+        
+        # Detectando objetos no frame
+        classes, scores, boxes = self.model.detect(frame, confThreshold=0.4, nmsThreshold=0.4)
 
-    detected = False
-    for (classid, score, box) in zip(classes, scores, boxes):
-        if int(classid) == KNIFE_CLASS_ID:  # Apenas detecta facas
-            label = f'{class_names[int(classid)]}: {score:.2f}'
-            
-            # Desenhando a caixa e mostrando o label
-            cv2.rectangle(frame, box, (255, 0, 0), 2)
-            cv2.putText(frame, label, (box[0], box[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
-            detected = True  # Marca que uma faca foi detectada
+        detected = False
+        for (classid, score, box) in zip(classes, scores, boxes):
+            if int(classid) == KNIFE_CLASS_ID:  # Apenas detecta facas
+                label = f'{self.class_names[int(classid)]}: {score:.2f}'
+                
+                # Desenhando a caixa e mostrando o label
+                cv2.rectangle(frame, box, (255, 0, 0), 2)
+                cv2.putText(frame, label, (box[0], box[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+                detected = True  # Marca que uma faca foi detectada
+        
+        return frame, detected
+                
     
-    return frame, detected
+    
+
+def parameters():
+    # Carregando as classes do COCO dataset
+    class_names = []
+    with open('DeteccaoObjeto/coco.names', 'r') as f:
+        class_names = [cname.strip() for cname in f.readlines()]
+    
+
+    # Capturando vídeo da webcam do notebook
+    # cap = cv2.VideoCapture(0) # Frame
+
+    # Carregando a rede YOLOv4-tinyq
+    net = cv2.dnn.readNet('DeteccaoObjeto/yolov4-tinyVersion/yolov4-tiny.weights', 'DeteccaoObjeto/yolov4-tinyVersion/yolov4-tiny.cfg')
+
+    # Verificando se há suporte para GPU
+    if cv2.cuda.getCudaEnabledDeviceCount() > 0:
+        print('CUDA enabled devices found, using GPU for inference')
+        net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
+        net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
+    else:
+        print('CUDA enabled devices not found, using CPU for inference')
+        net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
+        net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
+
+    # Configurando os parâmetros da rede neural
+    model = cv2.dnn_DetectionModel(net)
+
+    # Reduzi o tamanho da entrada para melhorar a velocidade do modelo; size=(320, 320), size=(416, 416) ou size=(608, 608)
+    model.setInputParams(size=(320, 320), scale=1 / 255)
+
+
+
 
 def combine_images(images, rows, cols, scale=0.5):
     
@@ -85,7 +105,7 @@ def combine_images(images, rows, cols, scale=0.5):
 
     return combined_image
 
-def main():
+def detection_knife():
     detected_images = []
     frame_skip = 5  # Número de frames a serem ignorados entre as detecções
     frame_count = 0
@@ -107,7 +127,7 @@ def main():
         # Se o número de frames capturados for múltiplo de frame_skip
         if frame_count % frame_skip == 0:
             # Detectando facas no frame capturado
-            frame, detected = detect_knifes(frame)
+            frame, detected = detect_knifes_AI(frame)
 
             if detected:
                 detected_images.append(frame.copy())  # Armazenando o frame com detecção
@@ -129,6 +149,3 @@ def main():
     cap.release()
     # me.streamoff()
     cv2.destroyAllWindows()
-
-if __name__ == "__main__":
-    main()

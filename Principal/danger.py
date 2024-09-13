@@ -2,11 +2,24 @@ from calendar import c
 import os
 import re
 
+import sys
+sys.path.append(r"C:\Users\Fernando\Documents\GitHub\Patrulha-de-drones\DeteccaoObjeto")
+from testePerigoWebCamv2 import detection
+
+
 import cv2
 from numpy import append
 
 def detect_danger(file):
-    return True
+    dir = os.getcwd()
+    if not "images" in os.listdir(dir):
+        os.mkdir("images")
+    dir = os.path.join(dir, "images\\")
+    path = os.path.join(dir, file)
+    detect = detection()
+    frame, detected = detect.detect_knifes_AI(path)
+    cv2.imwrite(path, frame)
+    return detected
 
 def send_alert(frame_name):
     print(f"Alert sent for frame {frame_name}")
@@ -40,6 +53,6 @@ def danger(end_flag):
                 read_frames = []
                     
         except:
-            open(dir + "read_frames.txt", "w").close()
+            open(dir + "alert_log.txt", "w").close()
             
 danger(False)
