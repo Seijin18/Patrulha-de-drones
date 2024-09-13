@@ -11,7 +11,7 @@ with open('DeteccaoObjeto/coco.names', 'r') as f:
 # Índice da classe 'person' no COCO dataset = 0
 # Índice da classe 'mouse' no COCO dataset = 64
 
-KNIFE_CLASS_ID = 64
+KNIFE_CLASS_ID = 0
 
 '''
 me = Tello()
