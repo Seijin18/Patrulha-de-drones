@@ -3,7 +3,7 @@ import os
 import re
 
 import sys
-sys.path.append(r"C:\Users\Fernando\Documents\GitHub\Patrulha-de-drones\DeteccaoObjeto")
+sys.path.append(r"C:\Users/lucas/OneDrive/Documents/Patrulha-de-drones\DeteccaoObjeto")
 from testePerigoWebCamv2 import detection
 
 
