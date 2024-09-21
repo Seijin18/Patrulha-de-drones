@@ -1,12 +1,5 @@
 from djitellopy import Tello
 
-# Funções de ação
-def turn_left(drone: Tello, angle):
-    drone.rotate_counter_clockwise(angle)
-
-def turn_right(drone: Tello, angle):
-    drone.rotate_clockwise(angle)
-
 # Função de controle
 def is_centralize(frame_generation, height, width, object, drone: Tello):
     if frame_generation:
@@ -16,17 +9,17 @@ def is_centralize(frame_generation, height, width, object, drone: Tello):
     
         centro_x = width // 2
         #centro_y = height // 2
+        
         # Define a margem da região central
         margem = 50
-        # Imprimir linhas de referência
-        #cv2.line(frame, (centro_x - margem, 0), (centro_x - margem, height), (255, 0, 0), 1)
-        #cv2.line(frame, (centro_x + margem, 0), (centro_x + margem, height), (255, 0, 0), 1)
         
         # Verificar se o objeto está na região central
-        if object[0] < centro_x - margem:
+        if object[0]//2 < centro_x - margem:
+            print("mais para esquerda")
             drone.rotate_counter_clockwise(10)
             return False
-        elif object[0] > centro_x + margem:
+        elif object[0]//2 > centro_x + margem:
+            print("mais para direita")
             drone.rotate_clockwise(10)
             return False
         
@@ -34,9 +27,9 @@ def is_centralize(frame_generation, height, width, object, drone: Tello):
 
 def set_direction(frame_generation, direction, object_frame):
     if direction == "cima":
-        object_frame.move_forward(20) if frame_generation else print("seguir para frente")
+        object_frame.move_forward(30) if frame_generation else print("seguir para frente")
     elif direction == "direita":
-        object_frame.rotate_clockwise(40) if frame_generation else  print("virar para a direita")
+        object_frame.rotate_clockwise(90) if frame_generation else  print("virar para a direita")
     elif direction == "esquerda":
         object_frame.rotate_counter_clockwise(90) if frame_generation else print("virar para esquerda")
     elif direction == "baixo":
